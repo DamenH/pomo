@@ -68,6 +68,7 @@ export function selectMode(
 	mode: Mode,
 	settings: Settings,
 ): TimerState {
+	if (state.endsAt !== null) return state;
 	return { ...state, mode, remainingMs: durationMs(mode, settings), endsAt: null };
 }
 

@@ -13,7 +13,9 @@ const MODES: { id: Mode; label: string; shortLabel: string }[] = [
 function formatTime(milliseconds: number) {
 	const seconds = Math.ceil(milliseconds / 1_000);
 	const minutes = Math.floor(seconds / 60);
-	return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+	const minuteText = String(minutes).padStart(2, "0");
+	const secondText = String(seconds % 60).padStart(2, "0");
+	return { minuteText, secondText, label: `${minuteText}:${secondText}` };
 }
 
 export default function App() {
@@ -39,8 +41,8 @@ export default function App() {
 	useEffect(() => {
 		document.documentElement.dataset.mode = timer.mode;
 		const mode = MODES.find(({ id }) => id === timer.mode)?.label ?? "Pomo";
-		document.title = `${time} · ${timer.endsAt === null ? "Pomo" : mode}`;
-	}, [time, timer.endsAt, timer.mode]);
+		document.title = `${time.label} · ${timer.endsAt === null ? "Pomo" : mode}`;
+	}, [time.label, timer.endsAt, timer.mode]);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -82,6 +84,7 @@ export default function App() {
 							className={`min-h-10 rounded-xl px-2 text-[13px] font-medium transition ${timer.mode === mode.id ? "bg-(--segment) text-(--ink) shadow-sm" : "text-(--muted) hover:text-(--ink)"}`}
 							type="button"
 							aria-current={timer.mode === mode.id ? "page" : undefined}
+							disabled={timer.endsAt !== null}
 							onClick={() => chooseMode(mode.id)}
 						>
 							<span className="hidden min-[390px]:inline">
@@ -129,10 +132,22 @@ export default function App() {
 						</svg>
 						<div className="relative text-center">
 							<div
-								className="text-[clamp(4rem,19vw,6.6rem)] font-[520] leading-none tracking-[-0.065em] tabular-nums"
+								className="flex items-center justify-center text-[clamp(4rem,19vw,6.6rem)] font-[520] leading-none tabular-nums"
+								aria-label={time.label}
 								aria-live="off"
 							>
-								{time}
+								<span className="tracking-[-0.065em]">
+									{time.minuteText}
+								</span>
+								<span
+									className="px-[5px] tracking-normal"
+									aria-hidden="true"
+								>
+									:
+								</span>
+								<span className="tracking-[-0.065em] opacity-60">
+									{time.secondText}
+								</span>
 							</div>
 							<div
 								className="mt-4 flex items-center justify-center gap-2"

@@ -5,6 +5,7 @@ import {
 	createTimer,
 	normalizeState,
 	pauseTimer,
+	selectMode,
 	startTimer,
 } from "./pomodoro";
 
@@ -15,6 +16,12 @@ describe("pomodoro timer", () => {
 
 		expect(paused.remainingMs).toBe(24 * 60_000);
 		expect(paused.endsAt).toBeNull();
+	});
+
+	it("does not change modes while the timer is running", () => {
+		const running = startTimer(createTimer(DEFAULT_SETTINGS), 1_000);
+
+		expect(selectMode(running, "shortBreak", DEFAULT_SETTINGS)).toBe(running);
 	});
 
 	it("offers a long break after the configured number of focus sessions", () => {
