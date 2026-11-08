@@ -140,10 +140,11 @@ export default function App() {
 									{time.minuteText}
 								</span>
 								<span
-									className="px-[5px] tracking-normal"
+									className="mx-[5px] flex -translate-y-[0.07em] flex-col gap-[0.11em]"
 									aria-hidden="true"
 								>
-									:
+									<span className="size-[0.075em] rounded-full bg-current" />
+									<span className="size-[0.075em] rounded-full bg-current" />
 								</span>
 								<span className="tracking-[-0.065em] opacity-60">
 									{time.secondText}
