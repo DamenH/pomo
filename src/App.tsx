@@ -132,19 +132,19 @@ export default function App() {
 						</svg>
 						<div className="relative text-center">
 							<div
-								className="flex items-center justify-center text-[clamp(4rem,19vw,6.6rem)] font-[520] leading-none tabular-nums"
+								className="grid grid-cols-[auto_auto_auto] items-center justify-center gap-x-[5px] text-[clamp(4rem,19vw,6.6rem)] font-[520] leading-none tabular-nums"
 								aria-label={time.label}
 								aria-live="off"
 							>
-								<span className="tracking-[-0.065em]">
+								<span className="pr-[0.065em] tracking-[-0.065em]">
 									{time.minuteText}
 								</span>
 								<span
-									className="mx-[5px] flex -translate-y-[0.01em] flex-col gap-[0.12em]"
+									className="relative h-[0.42em] w-[0.105em] -translate-y-[0.01em]"
 									aria-hidden="true"
 								>
-									<span className="size-[0.105em] rounded-full bg-current" />
-									<span className="size-[0.105em] rounded-full bg-current" />
+									<span className="absolute top-0 left-0 size-[0.105em] rounded-full bg-current" />
+									<span className="absolute bottom-0 left-0 size-[0.105em] rounded-full bg-current" />
 								</span>
 								<span className="tracking-[-0.065em] opacity-60">
 									{time.secondText}
