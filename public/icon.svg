@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pomo timer">
+  <rect width="512" height="512" rx="112" fill="#171f2f"/>
+  <circle cx="256" cy="256" r="148" fill="none" stroke="#f8faff" stroke-width="34"/>
+  <path d="M256 163v101l70 42" fill="none" stroke="#9b87f5" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="256" r="18" fill="#f8faff"/>
+  <circle cx="256" cy="72" r="18" fill="#9b87f5"/>
+</svg>
