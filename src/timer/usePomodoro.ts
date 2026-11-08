@@ -79,7 +79,11 @@ export function usePomodoro() {
 		const currentSettings = settingsRef.current;
 		const next = completeTimer(completed, currentSettings, at);
 		if (currentSettings.sound) playChime();
-		if (currentSettings.notifications && Notification.permission === "granted") {
+		if (
+			currentSettings.notifications &&
+			"Notification" in window &&
+			Notification.permission === "granted"
+		) {
 			new Notification(`${modeLabel(next.mode)} is ready`, {
 				body: next.mode === "focus" ? "Time to focus." : "Take a breath.",
 				icon: "./icon-192.png",

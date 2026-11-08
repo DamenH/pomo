@@ -38,7 +38,8 @@ export default function App() {
 
 	useEffect(() => {
 		document.documentElement.dataset.mode = timer.mode;
-		document.title = `${time} · ${timer.endsAt === null ? "Pomo" : "Focus"}`;
+		const mode = MODES.find(({ id }) => id === timer.mode)?.label ?? "Pomo";
+		document.title = `${time} · ${timer.endsAt === null ? "Pomo" : mode}`;
 	}, [time, timer.endsAt, timer.mode]);
 
 	useEffect(() => {
