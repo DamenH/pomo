@@ -197,6 +197,30 @@ select:focus-visible {
 	transform: translateX(18px);
 }
 
+.settings-sheet {
+	--settings-viewport-height: 100vh;
+	--settings-viewport-top: 0px;
+	--settings-height: min(calc(var(--settings-viewport-height) * 0.92), 800px);
+	position: fixed;
+	inset: auto 0 auto;
+	top: calc(
+		var(--settings-viewport-top) + var(--settings-viewport-height) -
+			var(--settings-height)
+	);
+	height: var(--settings-height);
+	max-height: var(--settings-height);
+	margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+	.settings-sheet {
+		top: calc(
+			var(--settings-viewport-top) +
+				(var(--settings-viewport-height) - var(--settings-height)) / 2
+		);
+	}
+}
+
 .settings-sheet::backdrop {
 	background: rgb(5 10 20 / 0.48);
 	backdrop-filter: blur(4px);

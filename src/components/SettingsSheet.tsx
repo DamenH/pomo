@@ -71,6 +71,13 @@ function Switch({
 export function SettingsSheet({ open, settings, onClose, onSave }: SettingsSheetProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [draft, setDraft] = useState(settings);
+	const [copyStatus, setCopyStatus] = useState("");
+
+	useEffect(() => {
+		if (!copyStatus) return;
+		const timeout = window.setTimeout(() => setCopyStatus(""), 2000);
+		return () => window.clearTimeout(timeout);
+	}, [copyStatus]);
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
 		null,
 	);
@@ -85,6 +92,32 @@ export function SettingsSheet({ open, settings, onClose, onSave }: SettingsSheet
 			dialog.close();
 		}
 	}, [open, settings]);
+
+	useEffect(() => {
+		if (!open) return;
+		const viewport = window.visualViewport;
+		const updateViewport = () => {
+			const dialog = dialogRef.current;
+			if (!dialog) return;
+			dialog.style.setProperty(
+				"--settings-viewport-height",
+				`${viewport?.height ?? window.innerHeight}px`,
+			);
+			dialog.style.setProperty(
+				"--settings-viewport-top",
+				`${viewport?.offsetTop ?? 0}px`,
+			);
+		};
+		updateViewport();
+		window.addEventListener("resize", updateViewport);
+		viewport?.addEventListener("resize", updateViewport);
+		viewport?.addEventListener("scroll", updateViewport);
+		return () => {
+			window.removeEventListener("resize", updateViewport);
+			viewport?.removeEventListener("resize", updateViewport);
+			viewport?.removeEventListener("scroll", updateViewport);
+		};
+	}, [open]);
 
 	useEffect(() => {
 		const capture = (event: Event) => {
@@ -118,15 +151,15 @@ export function SettingsSheet({ open, settings, onClose, onSave }: SettingsSheet
 	return (
 		<dialog
 			ref={dialogRef}
-			className="settings-sheet m-0 max-h-[92dvh] w-full max-w-none self-end overflow-hidden rounded-t-[28px] border-0 bg-(--panel) p-0 text-(--ink) shadow-2xl sm:m-auto sm:max-w-[430px] sm:self-auto sm:rounded-[28px]"
+			className="settings-sheet m-0 w-full max-w-none overflow-hidden rounded-t-[28px] border-0 bg-(--panel) p-0 text-(--ink) shadow-2xl sm:max-w-[430px] sm:rounded-[28px]"
 			onCancel={(event) => {
 				event.preventDefault();
 				onClose();
 			}}
 			onClose={onClose}
 		>
-			<form onSubmit={submit}>
-				<header className="flex items-center justify-between border-b border-(--hairline) px-5 py-4">
+			<form className="flex h-full min-h-0 flex-col" onSubmit={submit}>
+				<header className="flex shrink-0 items-center justify-between border-b border-(--hairline) px-5 py-4">
 					<h2 className="text-base font-semibold">Settings</h2>
 					<button
 						className="icon-button -mr-2"
@@ -138,7 +171,7 @@ export function SettingsSheet({ open, settings, onClose, onSave }: SettingsSheet
 					</button>
 				</header>
 
-				<div className="max-h-[calc(92dvh-132px)] overflow-y-auto px-5 py-3">
+				<div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-3">
 					<section aria-labelledby="timers-heading">
 						<h3 id="timers-heading" className="section-label">
 							Timers
@@ -272,13 +305,36 @@ export function SettingsSheet({ open, settings, onClose, onSave }: SettingsSheet
 					)}
 				</div>
 
-				<footer className="border-t border-(--hairline) bg-(--panel) p-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+				<footer className="shrink-0 border-t border-(--hairline) bg-(--panel) p-4 pb-[calc(16px+env(safe-area-inset-bottom,0px))]">
 					<button
 						className="w-full rounded-2xl bg-(--accent) px-5 py-3.5 font-semibold text-white shadow-[0_8px_28px_color-mix(in_srgb,var(--accent)_25%,transparent)] transition active:scale-[0.98]"
 						type="submit"
 					>
 						Done
 					</button>
+					<div className="mt-2 text-center text-[10px] leading-4 text-(--muted)">
+						<button
+							type="button"
+							className="select-all font-mono opacity-70 hover:opacity-100"
+							aria-label="Copy build version"
+							title="Copy build version"
+							onClick={async () => {
+								try {
+									await navigator.clipboard.writeText(
+										import.meta.env.VITE_BUILD_HASH,
+									);
+									setCopyStatus("Copied");
+								} catch {
+									setCopyStatus("Select the hash to copy");
+								}
+							}}
+						>
+							Build {import.meta.env.VITE_BUILD_HASH}
+						</button>
+						<span role="status" className="ml-2 empty:hidden">
+							{copyStatus}
+						</span>
+					</div>
 				</footer>
 			</form>
 		</dialog>
